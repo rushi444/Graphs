@@ -22,7 +22,30 @@ world.printRooms()
 player = Player("Name", world.startingRoom)
 
 # Fill this out
-traversalPath = []
+reverseDir = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
+traversalPath = [] # Path traveled to visit all the rooms
+reversePath = [] # Keep track of path segments for traveling back
+rooms = {} #Rooms with directions
+roomsdict = {} # Dictionary to iterate through exits
+rooms[0] = player.currentRoom.getExits() #Add room zero to graph & dictionary
+roomsdict[0] = player.currentRoom.getExits()
+
+while len(rooms) < len(roomGraph) - 1:
+    if player.currentRoom.id not in rooms:
+        rooms[player.currentRoom.id] = player.currentRoom.getExits()
+        roomsdict[player.currentRoom.id] = player.currentRoom.getExits()
+        lastDirection = reversePath[-1]  
+        roomsdict[player.currentRoom.id].remove(lastDirection)#Prevent doubles [s,s ]
+    while len(roomsdict[player.currentRoom.id]) < 1: 
+        reverse = reversePath.pop()
+        traversalPath.append(reverse)
+        player.travel(reverse)                           #[]
+    exit_dir = roomsdict[player.currentRoom.id].pop(0) # get the first exit in room [n, s]
+    traversalPath.append(exit_dir)
+    reversePath.append(reverseDir[exit_dir])
+    player.travel(exit_dir)
+print(traversalPath)
+
 
 
 
